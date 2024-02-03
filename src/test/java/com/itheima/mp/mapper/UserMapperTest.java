@@ -2,6 +2,7 @@ package com.itheima.mp.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.itheima.mp.pojo.User;
 import org.junit.jupiter.api.Test;
@@ -102,7 +103,7 @@ class UserMapperTest {
         ids.add(2);
         ids.add(4);
         UpdateWrapper<User> wrapper = new UpdateWrapper<User>()
-                .setSql("balance = balance - 1").in("id", ids).set("update_time", LocalDateTime.now());
+                .setSql("balance = balance + 1").in("id", ids);
         userMapper.update(null, wrapper);
     }
 
@@ -116,5 +117,29 @@ class UserMapperTest {
         List<User> users = userMapper.selectList(lambdaQueryWrapper);
         System.out.println(users.size());
         users.forEach(System.out :: println);
+    }
+
+    @Test
+    void testGroupDeduction() {
+        // update t_user set balance = balance - 2 where id in 1,2,4;
+        ArrayList<Integer> ids = new ArrayList<>();
+        ids.add(1);
+        ids.add(2);
+        ids.add(4);
+        LambdaUpdateWrapper<User> userLambdaUpdateWrapper = new LambdaUpdateWrapper<User>()
+                .in(User::getId, ids).setSql("balance = balance - 1");
+        userMapper.update(null, userLambdaUpdateWrapper);
+    }
+
+    @Test
+    void testCustomSqlUpdate() {
+        ArrayList<Long> ids = new ArrayList<>();
+        ids.add(1l);
+        ids.add(2l);
+        ids.add(4l);
+        int amount = 200;
+        LambdaUpdateWrapper<User> lambdaUpdateWrapper = new LambdaUpdateWrapper<User>()
+                .in(User::getId, ids);
+        userMapper.updateBalanceByIds(lambdaUpdateWrapper, amount);
     }
 }

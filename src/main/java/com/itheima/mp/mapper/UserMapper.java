@@ -1,6 +1,8 @@
 package com.itheima.mp.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.itheima.mp.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -19,4 +21,6 @@ public interface UserMapper extends BaseMapper<User> {
     User queryUserById(@Param("id") Long id);
 
     List<User> queryUserByIds(@Param("ids") List<Long> ids);
+
+    void updateBalanceByIds(@Param(Constants.WRAPPER) LambdaUpdateWrapper<User> lambdaUpdateWrapper, @Param("amount") int amount);
 }
